@@ -58,12 +58,18 @@ public class DBController extends SQLiteOpenHelper {
     }
     public Painting getAsset(String Barcode) {
         String selectQuery = "SELECT Description, Artist, Title, ResourceName FROM tblAssets WHERE Barcode = '" + Barcode + "'";
-        String result = "";
+        //String result = "";
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
+
+        Painting result = null;
         if (cursor.moveToFirst()) {
             do {
-                result = (cursor.getString(0));
+                result = new Painting(cursor.getString(cursor.getColumnIndex("Title")),
+                                cursor.getString(cursor.getColumnIndex("Description")),
+                                cursor.getString(cursor.getColumnIndex("ResourceName")),
+                                cursor.getString(cursor.getColumnIndex("Author")));
+                //result = (cursor.getString(0));
             } while (cursor.moveToNext());
         }
         return result;
