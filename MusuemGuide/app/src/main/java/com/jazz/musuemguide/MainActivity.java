@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onPause() {
         sensorMan.unregisterListener(this);
+        unregisterReceiver(dataWedgeIntentReceiver);
         super.onPause();
     }
 
