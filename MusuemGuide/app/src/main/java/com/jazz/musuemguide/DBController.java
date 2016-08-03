@@ -1,5 +1,6 @@
 package com.jazz.musuemguide;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -25,6 +26,15 @@ public class DBController extends SQLiteOpenHelper {
         String query;
         query = "CREATE TABLE IF NOT EXISTS tblAssets ( Id INTEGER PRIMARY KEY, Barcode TEXT, Title TEXT, Description TEXT, Artist TEXT, ResourceName TEXT)";
         database.execSQL(query);
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("Barcode", "1002");
+        contentValues.put("Title", "Starry Night");
+        contentValues.put("Description", "The Mona Lisa is a half-length portrait of a woman by the Italian artist Leonardo da Vinci, which has been acclaimed as \"the best known, the most visited, the most written about, the most sung about, the most parodied work of art in the world\". Wikipedia");
+        contentValues.put("Author", "Leonardo da Vinci");
+        contentValues.put("ResourceName", "1002.jpg");
+        database.insert("tblAssets", null, contentValues);
+        database.close();
     }
     @Override
     public void onUpgrade(SQLiteDatabase database, int version_old,
@@ -53,7 +63,9 @@ public class DBController extends SQLiteOpenHelper {
                 map.put("ResourceName", cursor.getString(5));
                 AssetList.add(map);
             } while (cursor.moveToNext());
+            cursor.close();
         }
+        database.close();
         return AssetList;
     }
     public Painting getAsset(String Barcode) {
@@ -71,7 +83,9 @@ public class DBController extends SQLiteOpenHelper {
                                 cursor.getString(cursor.getColumnIndex("Author")));
                 //result = (cursor.getString(0));
             } while (cursor.moveToNext());
+            cursor.close();
         }
+        database.close();
         return result;
     }
 }

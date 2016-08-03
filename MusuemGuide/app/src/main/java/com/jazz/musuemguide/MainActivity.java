@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             final String data = i.getStringExtra("com.motorolasolutions.emdk.datawedge.data_string");
 
             //get the type
-            String barcodeType = i.getStringExtra("com.motorolasolutions.emdk.datawedge.label_type");
+            //String barcodeType = i.getStringExtra("com.motorolasolutions.emdk.datawedge.label_type");
 
             // check if the data has come from the barcode scanner
             if (source.equalsIgnoreCase("scanner")) {
@@ -54,23 +55,61 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if (data != null && data.length() > 0) {
 
 
-                    final TextView tvHello = (TextView) findViewById(R.id.tvHello);
+                    /*final TextView tvHello = (TextView) findViewById(R.id.tvHello);
                     tvHello.post(new Runnable() {
                         @Override
                         public void run() {
                             tvHello.setText(data);
                         }
-                    });
+                    });*/
                     View rootView = (View) findViewById(android.R.id.content);
-                    Snackbar.make(rootView, data, Snackbar.LENGTH_LONG)
+                    Snackbar.make(rootView, data, Snackbar.LENGTH_SHORT)
                             .show();
-                    Painting result = db.getAsset(data);
-                    Intent newIntent = new Intent();
-                    newIntent.putExtra("com.jazz.extra.title",result.getTitle());
-                    newIntent.putExtra("com.jazz.extra.description",result.getDescription());
-                    newIntent.putExtra("com.jazz.extra.author",result.getAuthor());
-                    newIntent.putExtra("com.jazz.extra.assetpath",result.getAssetPath());
-                    startActivity(newIntent);
+//                    Painting result = db.getAsset(data);
+                    Painting result = null;
+                    switch(data) {
+                        case "1005" :
+                            result = new Painting("Mona Lisa",
+                                                  "The Mona Lisa is a half-length " +
+                                                  "portrait of a woman by the " +
+                                                  "Italian artist Leonardo da Vinci," +
+                                                  " which has been acclaimed as " +
+                                                  "\\\"the best known, the most " +
+                                                  "visited, the most written about, " +
+                                                  "the most sung about, the most " +
+                                                  "parodied work of art in the " +
+                                                  "world\\\". Wikipedia",
+                                                  "1005.jpg",
+                                                  "Leonardo DaVinci");
+                            break;
+                        case "1003":
+                            result = new Painting("The Scream",
+                                                  "The Scream is the popular name given to each " +
+                                                  "of four versions of a composition, created as " +
+                                                  "both paintings and pastels, by the " +
+                                                  "Expressionist artist Edvard Munch between 1893" +
+                                                  " and 1910. The German title Munch gave these " +
+                                                  "works is Der Schrei der Natur",
+                                                  "1003.jpg", "Edvard Munch");
+                            break;
+                        case "1002":
+                            result = new Painting("Starry Night",
+                                                  "The Starry Night is an oil on canvas by the " +
+                                                  "Dutch post-impressionist painter Vincent van " +
+                                                  "Gogh. Painted in June 1889, it depicts the " +
+                                                  "view from the east-facing window of his asylum" +
+                                                  " room at Saint-Rémy-de-Provence",
+                                                  "1002.jpg", "Vincent Van Gogh");
+                            break;
+                    }
+                    if (result != null) {
+                        Intent newIntent = new Intent(PaintingDetailActivity.ACTION_LAUNCH);
+                        newIntent.putExtra(PaintingDetailActivity.PARAM_TITLE,result.getTitle());
+                        newIntent.putExtra(PaintingDetailActivity.PARAM_DESCRIPTION,result.getDescription());
+                        newIntent.putExtra(PaintingDetailActivity.PARAM_ARTIST,result.getAuthor());
+                        newIntent.putExtra(PaintingDetailActivity.PARAM_ASSET_PATH,result.getAssetPath());
+                        startActivity(newIntent);
+                    }
                     //barcodeScannedListener.onBarcodeScanned(data,barcodeType);
                 }
             }
@@ -84,38 +123,40 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*Button fab = (Button) findViewById(R.id.testButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent newIntent = new Intent("com.jazz.musuemguide.RECVR");
+                newIntent.addCategory("android.intent.category.DEFAULT");
+                newIntent.putExtra("com.motorolasolutions.emdk.datawedge.data_string","1005");
+                sendBroadcast(newIntent);
             }
-        });
+        });*/
 
-        sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
+        /*sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
         accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
-
-        IntentFilter filter = new IntentFilter("com.jazz.musuemguide.RECVR");
-        filter.addCategory("android.intent.category.DEFAULT");
-        registerReceiver(dataWedgeIntentReceiver, filter);
+        mAccelLast = SensorManager.GRAVITY_EARTH;*/
 
         db = new DBController(this);
+        //db.getWritableDatabase();
     }
 
     @Override
     protected void onResume() {
-        sensorMan.registerListener(this, accelerometer,
-                SensorManager.SENSOR_DELAY_UI);
+        IntentFilter filter = new IntentFilter("com.jazz.musuemguide.RECVR");
+        filter.addCategory("android.intent.category.DEFAULT");
+        registerReceiver(dataWedgeIntentReceiver, filter);
+        //sensorMan.registerListener(this, accelerometer,
+        //SensorManager.SENSOR_DELAY_UI);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        sensorMan.unregisterListener(this);
+        //sensorMan.unregisterListener(this);
         unregisterReceiver(dataWedgeIntentReceiver);
         super.onPause();
     }
@@ -135,9 +176,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

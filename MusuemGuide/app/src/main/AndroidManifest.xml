@@ -18,6 +18,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PaintingDetailActivity"
+            android:label="@string/title_activity_painting_detail"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jazz.musuemguide.MainActivity" />
+            <intent-filter>
+                <action android:name="com.jazz.action.PaintingDetail" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!--<activity android:name=".DatabaseTest"></activity>-->
     </application>
 
 </manifest>
