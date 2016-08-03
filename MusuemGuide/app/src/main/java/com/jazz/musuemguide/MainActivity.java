@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     boolean bStill = false;
 
+    DBController db;
+
     private BroadcastReceiver dataWedgeIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent i) {
@@ -62,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     View rootView = (View) findViewById(android.R.id.content);
                     Snackbar.make(rootView, data, Snackbar.LENGTH_LONG)
                             .show();
+                    Painting result = db.getAsset(data);
+                    Intent newIntent = new Intent();
+                    newIntent.putExtra("com.jazz.extra.title",result.getTitle());
+                    newIntent.putExtra("com.jazz.extra.description",result.getDescription());
+                    newIntent.putExtra("com.jazz.extra.author",result.getAuthor());
+                    newIntent.putExtra("com.jazz.extra.assetpath",result.getAssetPath());
+                    startActivity(newIntent);
                     //barcodeScannedListener.onBarcodeScanned(data,barcodeType);
                 }
             }
@@ -93,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         IntentFilter filter = new IntentFilter("com.jazz.musuemguide.RECVR");
         filter.addCategory("android.intent.category.DEFAULT");
         registerReceiver(dataWedgeIntentReceiver, filter);
+
+        db = new DBController(this);
     }
 
     @Override

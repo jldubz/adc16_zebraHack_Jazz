@@ -23,7 +23,7 @@ public class DBController extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         String query;
-        query = "CREATE TABLE IF NOT EXISTS tblAssets ( Id INTEGER PRIMARY KEY, Barcode TEXT, Description TEXT, Artist TEXT, ResourceName TEXT)";
+        query = "CREATE TABLE IF NOT EXISTS tblAssets ( Id INTEGER PRIMARY KEY, Barcode TEXT, Title TEXT, Description TEXT, Artist TEXT, ResourceName TEXT)";
         database.execSQL(query);
     }
     @Override
@@ -47,16 +47,17 @@ public class DBController extends SQLiteOpenHelper {
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put("Id", cursor.getString(0));
                 map.put("Barcode", cursor.getString(1));
-                map.put("Description", cursor.getString(2));
-                map.put("Artist", cursor.getString(3));
-                map.put("ResourceName", cursor.getString(4));
+                map.put("Title", cursor.getString(2));
+                map.put("Description", cursor.getString(3));
+                map.put("Artist", cursor.getString(4));
+                map.put("ResourceName", cursor.getString(5));
                 AssetList.add(map);
             } while (cursor.moveToNext());
         }
         return AssetList;
     }
-    public String getAsset(String Barcode) {
-        String selectQuery = "SELECT Description, Artist, ResourceName FROM tblAssets WHERE Barcode = '" + Barcode + "'";
+    public Painting getAsset(String Barcode) {
+        String selectQuery = "SELECT Description, Artist, Title, ResourceName FROM tblAssets WHERE Barcode = '" + Barcode + "'";
         String result = "";
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
